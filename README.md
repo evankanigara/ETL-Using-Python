@@ -38,3 +38,36 @@ To transform the money format from `$91.5 miliar` to 91500.0 we will use the Reg
     def transform_money_format(string_money):
         half_clean_string = string_money.lower().replace(" ", "")
         return re.sub(r"[?\[M\]miliar|\[$\]]", "", half_clean_string)
+        
+### Load the Data
+To load the data from the Pandas dataframe to the PostgreSQL database we will use _sqlalchemy_ module. It will create the engine needed to store the data into the database. To actually load the data to the database, we will use `df.to_sql` function. All of these function will be glued together in the new function that called *write_to_postgres*. Don't forget to specify the table name for the local database.
+
+        def write_to_postgres(df, db_name, table_name, connection_string):
+            engine = create_engine('postgresql+psycopg2://postgres:120997@localhost/postgres')
+            logging.info(f"Writing dataframe to database: '{db_name}', table: '{table_name}' ...")
+            df.to_sql(name = table_name, con=engine, if_exists="replace", index=False)
+            
+While to load the data to the cloud databases, simply change the `CONNECTION_STRING` to the desired cloud databses. You should specify: 
+- DB_NAME
+- DB_USER
+- DB_PASSWORD 
+- DB_HOST
+- DB_PORT
+
+### Read the Data
+To read the data that already stored in the local/cloud databases you are also need to make the SQL engine to connect to the databases. To actually read from the datases, it will use the `pd.read_sql_table` function. All of these will be written inside the *read_from_postgres* function.
+
+        def read_from_postgres(db_name, table_name, connection_string):
+            engine = create_engine('databaseinfo)
+            logging.info(f"Reading postgres database: ...")
+            return pd.read_sql_table("Bernard-Evan-Kanigara_orang_terkaya_forbes", con=engine)
+
+The result in the local PostgreSQL database:
+
+<img src="https://camo.githubusercontent.com/707cada21eed2d184a53bb96b774beb1b2508e493ef60411b0c1cd7fd2cbbc34/68747470733a2f2f7261772e67697468756275736572636f6e74656e742e636f6d2f6576616e6b616e69676172612f45544c2d5573696e672d507974686f6e2f6d61696e2f64617461626173655f6c6f6b616c2e504e47" alt="Result Table" width="1000"/>
+
+## Contact
+- LinkedIn: [Bernard Evan Kanigara](https://www.linkedin.com/in/bernard-evan-kanigara/)
+- Email: bernardevankanigara@gmail.com
+
+Thank you!
